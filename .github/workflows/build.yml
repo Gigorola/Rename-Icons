@@ -11,7 +11,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Unpack
-        run: unzip -q RenameIcons.zip -d src
+        run: |
+          unzip -q RenameIcons.zip -d src
+          chmod -R u+rwX src
 
       - name: Fix prefs Makefile
         working-directory: src/RenameIcons/prefs
@@ -44,6 +46,8 @@ jobs:
         working-directory: src/RenameIcons
         run: |
           export PATH="$(brew --prefix make)/libexec/gnubin:$PATH"
+          chmod -R u+rwX .
+          chmod 644 RenameIcons.plist
           chmod 755 layout/DEBIAN/postinst
           make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 
