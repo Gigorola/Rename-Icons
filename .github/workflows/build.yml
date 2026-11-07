@@ -13,18 +13,32 @@ jobs:
       - name: Unpack
         run: unzip -q RenameIcons.zip -d src
 
+      - name: Fix prefs Makefile
+        working-directory: src/RenameIcons/prefs
+        run: |
+          cat > Makefile <<'EOF'
+          TARGET := iphone:clang:latest:14.0
+          ARCHS = arm64 arm64e
+          THEOS_PACKAGE_SCHEME = rootless
+
+          include $(THEOS)/makefiles/common.mk
+
+          BUNDLE_NAME = RenameIconsPrefs
+
+          RenameIconsPrefs_FILES = RIConfig.m RIAppController.m RIRootListController.m
+          RenameIconsPrefs_FRAMEWORKS = UIKit
+          RenameIconsPrefs_LDFLAGS = -undefined dynamic_lookup
+          RenameIconsPrefs_INSTALL_PATH = /Library/PreferenceBundles
+          RenameIconsPrefs_CFLAGS = -fobjc-arc
+
+          include $(THEOS_MAKE_PATH)/bundle.mk
+          EOF
+
       - name: Install Theos
         run: |
           brew install ldid dpkg make
           git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
-
-      - name: Install SDKs
-        run: |
-          git clone --depth=1 https://github.com/theos/sdks.git "$RUNNER_TEMP/sdks"
-          mkdir -p "$HOME/theos/sdks"
-          cp -R "$RUNNER_TEMP"/sdks/*.sdk "$HOME/theos/sdks/"
-          ls "$HOME/theos/sdks"
 
       - name: Build
         working-directory: src/RenameIcons
@@ -38,4 +52,3 @@ jobs:
         with:
           name: RenameIcons-deb
           path: src/RenameIcons/packages/*.deb
-
