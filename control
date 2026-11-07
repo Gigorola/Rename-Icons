@@ -1,0 +1,9 @@
+Package: com.user.renameicons
+Name: RenameIcons
+Version: 1.1.0
+Architecture: iphoneos-arm64
+Description: Меняет названия и иконки приложений на домашнем экране. Настройки в приложении Настройки.
+Maintainer: me
+Author: me
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader
